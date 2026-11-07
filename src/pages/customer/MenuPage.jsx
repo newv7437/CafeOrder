@@ -1,6 +1,6 @@
 /**
- * 미니멀 프리미엄 고객 메인 화면
- * 첫 화면(First Fold) 최적화 레이아웃
+ * 모던 미니멀 스페셜티 카페 고객 메인 화면
+ * coffee house. · COFFEE & MOMENTS
  * 경로: /
  */
 import { useEffect, useState, useMemo } from 'react'
@@ -67,26 +67,33 @@ export default function MenuPage() {
 
   return (
     <div className="min-h-screen bg-[#FBF9F5] text-[#2B1810]">
-      {/* 슬림하고 세련된 헤더 */}
-      <header className="bg-white/90 backdrop-blur-md sticky top-0 z-30 border-b border-[#EFEAE2] shadow-[0_1px_10px_rgba(61,39,29,0.03)]">
+      {/* 모던 미니멀 헤더 */}
+      <header className="bg-white/85 backdrop-blur-md sticky top-0 z-30 border-b border-[#EFEAE2]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
-          {/* 브랜드 로고 */}
-          <div className="flex items-center gap-2.5 shrink-0">
-            <div className="w-9 h-9 rounded-xl bg-[#3D271D] text-[#FAF7F2] flex items-center justify-center font-serif text-base font-bold shadow-sm">
-              ☕
+          {/* 브랜드 로고 (coffee house. + 세련된 미니멀 커피잔 아이콘) */}
+          <div className="flex items-center gap-2.5 shrink-0 select-none">
+            <div className="w-8 h-8 rounded-xl bg-[#3D271D] text-[#FAF7F2] flex items-center justify-center shadow-sm">
+              {/* 심플하고 세련된 미니멀 커피잔 SVG 아이콘 */}
+              <svg className="w-4 h-4 text-[#FAF7F2]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 8h1a3 3 0 0 1 0 6h-1" />
+                <path d="M4 8h14v8a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8z" />
+                <line x1="7" y1="2" x2="7" y2="5" />
+                <line x1="11" y1="2" x2="11" y2="5" />
+                <line x1="15" y1="2" x2="15" y2="5" />
+              </svg>
             </div>
-            <div>
-              <h1 className="text-lg font-serif font-black tracking-tight text-[#2B1810] leading-none">
-                COFFEE HOUSE
-              </h1>
-              <span className="text-[10px] font-sans tracking-widest uppercase text-[#8C7769] font-medium block">
-                Specialty Roastery
+            <div className="flex flex-col">
+              <span className="text-[9px] font-sans tracking-[0.22em] uppercase text-[#8C7769] font-medium leading-none mb-1">
+                COFFEE & MOMENTS
               </span>
+              <h1 className="text-base sm:text-lg font-sans font-semibold tracking-tight text-[#2B1810] leading-none">
+                coffee house.
+              </h1>
             </div>
           </div>
 
           {/* 데스크톱 검색창 */}
-          <div className="hidden sm:block w-72">
+          <div className="hidden sm:block w-64 md:w-72">
             <div className="relative">
               <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-[#A08E82]">
                 🔍
@@ -127,14 +134,22 @@ export default function MenuPage() {
         </div>
       </header>
 
-      {/* 메인 콘텐츠 영역 (상하 여백 최적화) */}
+      {/* 메인 콘텐츠 영역 */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
-        {/* 한 줄 타이틀 및 카테고리 컨트롤 바 */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
-          {/* 한 줄 환영 슬로건 */}
-          <h2 className="font-serif font-bold text-xl sm:text-2xl text-[#2B1810] tracking-tight">
-            Enjoy the real taste of coffee.
-          </h2>
+        {/* 현대적인 메인 환영 영역 & 카테고리 컨트롤 바 */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-5 pb-1">
+          {/* 감성적인 메인 타이포그래피 영역 */}
+          <div>
+            <span className="text-[10px] sm:text-[11px] font-sans tracking-[0.2em] uppercase text-[#9B897D] font-medium block mb-1">
+              YOUR DAILY COFFEE MOMENT
+            </span>
+            <h2 className="text-xl sm:text-2xl font-sans font-medium text-[#2B1810] tracking-tight leading-snug">
+              오늘의 커피, 당신의 순간.
+            </h2>
+            <p className="text-xs text-[#7A695C] mt-1 font-normal font-sans">
+              좋아하는 커피를 골라보세요.
+            </p>
+          </div>
 
           {/* 카테고리 둥근 탭 */}
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none" role="tablist" aria-label="메뉴 카테고리">
@@ -147,10 +162,10 @@ export default function MenuPage() {
                   aria-selected={isSelected}
                   onClick={() => setActiveCategory(cat)}
                   id={`category-${cat}`}
-                  className={`cursor-pointer px-4 py-1.5 rounded-full font-serif font-semibold text-xs tracking-wide whitespace-nowrap transition-all duration-150 select-none ${
+                  className={`cursor-pointer px-4 py-1.5 rounded-full font-sans text-xs tracking-normal whitespace-nowrap transition-all duration-150 select-none ${
                     isSelected
-                      ? 'bg-[#3D271D] text-[#FAF7F2] shadow-sm'
-                      : 'bg-white text-[#7C6A5E] hover:text-[#3D271D] hover:bg-[#F3ECE0] border border-[#EBE4DA]'
+                      ? 'bg-[#3D271D] text-[#FAF7F2] shadow-sm font-semibold'
+                      : 'bg-white text-[#7C6A5E] hover:text-[#3D271D] hover:bg-[#F3ECE0] border border-[#EBE4DA] font-normal'
                   }`}
                 >
                   {cat}
@@ -178,7 +193,7 @@ export default function MenuPage() {
 
         {/* 2열/3열 그리드 & 오른쪽 고정 장바구니 */}
         <div className="flex items-start gap-6">
-          {/* 메뉴 그리드 (첫 화면에 즉시 꽉 차게 노출) */}
+          {/* 메뉴 그리드 */}
           <main className="flex-1 min-w-0">
             {loading ? (
               <div className="flex justify-center py-20">

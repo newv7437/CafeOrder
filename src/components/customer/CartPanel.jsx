@@ -21,7 +21,7 @@ export default function CartPanel() {
         <div className="flex items-center justify-between border-b border-[#F2ECE4] pb-4">
           <div className="flex items-center gap-2">
             <span className="text-xl">🧺</span>
-            <h2 className="font-serif font-bold text-lg text-[#2B1810]">
+            <h2 className="font-sans font-semibold text-base text-[#2B1810]">
               Cart
             </h2>
           </div>
@@ -46,8 +46,8 @@ export default function CartPanel() {
             <div className="w-16 h-16 rounded-full bg-[#FAF7F2] flex items-center justify-center text-2xl mb-3 text-[#A08E82] shadow-inner">
               ☕
             </div>
-            <p className="font-serif font-medium text-sm text-[#4A2E1F]">장바구니가 비어 있습니다</p>
-            <p className="text-xs text-[#9B897D] mt-1 font-sans">원하시는 프리미엄 메뉴를 담아보세요</p>
+            <p className="font-sans font-medium text-xs text-[#4A2E1F]">장바구니가 비어 있습니다</p>
+            <p className="text-[11px] text-[#9B897D] mt-0.5 font-sans">원하시는 메뉴를 담아보세요</p>
           </div>
         ) : (
           <>
@@ -112,8 +112,8 @@ export default function CartPanel() {
                 <span className="font-semibold text-[#4A2E1F]">{totalQuantity}개</span>
               </div>
               <div className="flex justify-between items-baseline pt-1">
-                <span className="font-serif font-bold text-sm text-[#2B1810]">총 결제금액</span>
-                <span className="font-serif font-black text-2xl text-[#3D271D]">
+                <span className="font-sans font-medium text-xs text-[#2B1810]">총 결제금액</span>
+                <span className="font-sans font-bold text-xl text-[#3D271D]">
                   {totalPrice.toLocaleString()}원
                 </span>
               </div>
@@ -123,10 +123,10 @@ export default function CartPanel() {
             <button
               onClick={() => setShowConfirm(true)}
               id="order-submit-btn"
-              className="cursor-pointer w-full bg-[#3D271D] hover:bg-[#2B1810] active:scale-[0.98] text-[#FAF7F2] font-serif font-bold py-4 rounded-2xl transition-all duration-200 text-base shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group"
+              className="cursor-pointer w-full bg-[#3D271D] hover:bg-[#2B1810] active:scale-[0.98] text-[#FAF7F2] font-sans font-semibold py-3.5 rounded-2xl transition-all duration-200 text-sm shadow-md hover:shadow-lg flex items-center justify-center gap-2 group"
             >
               <span>주문하기</span>
-              <span className="text-sm opacity-70 group-hover:translate-x-1 transition-transform">→</span>
+              <span className="text-xs opacity-70 group-hover:translate-x-1 transition-transform">→</span>
             </button>
           </>
         )}
