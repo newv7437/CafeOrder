@@ -60,3 +60,4 @@ export function getMenuDetail(name) {
     rating: '4.8',
   }
 }
+

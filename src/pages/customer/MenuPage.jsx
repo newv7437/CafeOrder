@@ -1,6 +1,6 @@
 /**
  * 미니멀 프리미엄 고객 메인 화면
- * Minimal Premium · 따뜻한 아이보리 + 에스프레소 브라운
+ * 첫 화면(First Fold) 최적화 레이아웃
  * 경로: /
  */
 import { useEffect, useState, useMemo } from 'react'
@@ -48,7 +48,6 @@ export default function MenuPage() {
   // 카테고리 및 검색어 필터링
   const filtered = useMemo(() => {
     return menus.filter(menu => {
-      // 카테고리 매핑: '음료' -> '논커피'
       let matchCategory = true
       if (activeCategory === '커피') {
         matchCategory = menu.category === '커피'
@@ -58,7 +57,6 @@ export default function MenuPage() {
         matchCategory = menu.category === '디저트'
       }
 
-      // 검색어 매칭
       const matchSearch = searchQuery.trim() === ''
         ? true
         : menu.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -68,22 +66,46 @@ export default function MenuPage() {
   }, [menus, activeCategory, searchQuery])
 
   return (
-    <div className="min-h-screen bg-[#FBF9F5] text-[#2B1810] selection:bg-[#EBDDCF]">
-      {/* 프리미엄 미니멀 상단 헤더 */}
-      <header className="bg-white/80 backdrop-blur-md sticky top-0 z-30 border-b border-[#EFEAE2] transition-all">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+    <div className="min-h-screen bg-[#FBF9F5] text-[#2B1810]">
+      {/* 슬림하고 세련된 헤더 */}
+      <header className="bg-white/90 backdrop-blur-md sticky top-0 z-30 border-b border-[#EFEAE2] shadow-[0_1px_10px_rgba(61,39,29,0.03)]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
           {/* 브랜드 로고 */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#3D271D] text-[#FAF7F2] flex items-center justify-center font-serif text-lg font-bold shadow-md">
+          <div className="flex items-center gap-2.5 shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-[#3D271D] text-[#FAF7F2] flex items-center justify-center font-serif text-base font-bold shadow-sm">
               ☕
             </div>
             <div>
-              <span className="text-[10px] font-sans tracking-[0.25em] uppercase text-[#8C7769] font-semibold block">
-                Specialty Roastery
-              </span>
-              <h1 className="text-xl font-serif font-black tracking-tight text-[#2B1810] leading-none">
+              <h1 className="text-lg font-serif font-black tracking-tight text-[#2B1810] leading-none">
                 COFFEE HOUSE
               </h1>
+              <span className="text-[10px] font-sans tracking-widest uppercase text-[#8C7769] font-medium block">
+                Specialty Roastery
+              </span>
+            </div>
+          </div>
+
+          {/* 데스크톱 검색창 */}
+          <div className="hidden sm:block w-72">
+            <div className="relative">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-[#A08E82]">
+                🔍
+              </span>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Find your coffee..."
+                className="w-full bg-[#FAF7F2] border border-[#E8E1D7] rounded-full pl-9 pr-3.5 py-1.5 text-xs text-[#2B1810] placeholder-[#B09E91] focus:outline-none focus:bg-white focus:border-[#4A2E1F] transition-all"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-[#A08E82] hover:text-[#4A2E1F]"
+                >
+                  ✕
+                </button>
+              )}
             </div>
           </div>
 
@@ -92,12 +114,12 @@ export default function MenuPage() {
             onClick={() => setShowCart(true)}
             id="open-cart-btn"
             aria-label={`장바구니 열기 (${totalQuantity}개)`}
-            className="lg:hidden relative bg-[#3D271D] text-[#FAF7F2] rounded-2xl px-4 py-2.5 font-medium text-xs flex items-center gap-2 shadow-md active:scale-95 transition-all"
+            className="lg:hidden relative bg-[#3D271D] text-[#FAF7F2] rounded-xl px-3.5 py-2 font-medium text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all"
           >
             <span>🧺</span>
             <span>Cart</span>
             {totalQuantity > 0 && (
-              <span className="bg-[#B8860B] text-white text-[10px] rounded-full px-1.5 py-0.5 font-bold shadow-sm">
+              <span className="bg-[#B8860B] text-white text-[10px] rounded-full px-1.5 py-0.2 font-bold">
                 {totalQuantity}
               </span>
             )}
@@ -105,99 +127,83 @@ export default function MenuPage() {
         </div>
       </header>
 
-      {/* 메인 컨테이너 */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-        {/* 환영 타이틀 & 검색 영역 */}
-        <div className="mb-10 text-center sm:text-left flex flex-col sm:flex-row sm:items-end justify-between gap-6">
-          <div>
-            <span className="text-xs font-semibold tracking-widest uppercase text-[#B8860B] mb-2 block">
-              Handcrafted with Passion
-            </span>
-            <h2 className="font-serif font-black text-3xl sm:text-4xl text-[#2B1810] leading-tight tracking-tight">
-              Enjoy the real taste <br className="hidden sm:inline" />
-              of coffee.
-            </h2>
-            <p className="text-sm text-[#7A695C] mt-2 font-sans max-w-md">
-              매일 엄선하는 스페셜티 원두와 정성으로 내린 프리미엄 한 잔을 만나보세요.
-            </p>
-          </div>
+      {/* 메인 콘텐츠 영역 (상하 여백 최적화) */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
+        {/* 한 줄 타이틀 및 카테고리 컨트롤 바 */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+          {/* 한 줄 환영 슬로건 */}
+          <h2 className="font-serif font-bold text-xl sm:text-2xl text-[#2B1810] tracking-tight">
+            Enjoy the real taste of coffee.
+          </h2>
 
-          {/* 미니멀 검색 인풋 */}
-          <div className="w-full sm:w-72">
-            <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-[#A08E82]">
-                🔍
-              </span>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Find your coffee..."
-                className="w-full bg-white border border-[#E8E1D7] rounded-full pl-10 pr-4 py-3 text-xs text-[#2B1810] placeholder-[#B09E91] focus:outline-none focus:border-[#4A2E1F] focus:ring-2 focus:ring-[#4A2E1F]/10 shadow-[0_2px_10px_rgba(61,39,29,0.03)] transition-all"
-              />
-              {searchQuery && (
+          {/* 카테고리 둥근 탭 */}
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none" role="tablist" aria-label="메뉴 카테고리">
+            {CATEGORIES.map(cat => {
+              const isSelected = activeCategory === cat
+              return (
                 <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-[#A08E82] hover:text-[#4A2E1F]"
+                  key={cat}
+                  role="tab"
+                  aria-selected={isSelected}
+                  onClick={() => setActiveCategory(cat)}
+                  id={`category-${cat}`}
+                  className={`cursor-pointer px-4 py-1.5 rounded-full font-serif font-semibold text-xs tracking-wide whitespace-nowrap transition-all duration-150 select-none ${
+                    isSelected
+                      ? 'bg-[#3D271D] text-[#FAF7F2] shadow-sm'
+                      : 'bg-white text-[#7C6A5E] hover:text-[#3D271D] hover:bg-[#F3ECE0] border border-[#EBE4DA]'
+                  }`}
                 >
-                  ✕
+                  {cat}
                 </button>
-              )}
-            </div>
+              )
+            })}
           </div>
         </div>
 
-        {/* 둥근 카테고리 탭 (전체, 커피, 논커피, 디저트) */}
-        <div className="flex gap-2.5 mb-8 overflow-x-auto pb-2 scrollbar-none" role="tablist" aria-label="메뉴 카테고리">
-          {CATEGORIES.map(cat => {
-            const isSelected = activeCategory === cat
-            return (
-              <button
-                key={cat}
-                role="tab"
-                aria-selected={isSelected}
-                onClick={() => setActiveCategory(cat)}
-                id={`category-${cat}`}
-                className={`cursor-pointer px-6 py-2.5 rounded-full font-serif font-semibold text-xs tracking-wide whitespace-nowrap transition-all duration-200 select-none ${
-                  isSelected
-                    ? 'bg-[#3D271D] text-[#FAF7F2] shadow-md shadow-[#3D271D]/15 scale-105'
-                    : 'bg-white text-[#7C6A5E] hover:text-[#3D271D] hover:bg-[#F3ECE0] border border-[#EBE4DA]'
-                }`}
-              >
-                {cat}
-              </button>
-            )
-          })}
+        {/* 모바일 검색창 (작은 화면일 때만 노출) */}
+        <div className="block sm:hidden mb-4">
+          <div className="relative">
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-[#A08E82]">
+              🔍
+            </span>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Find your coffee..."
+              className="w-full bg-white border border-[#E8E1D7] rounded-full pl-9 pr-3.5 py-2 text-xs text-[#2B1810] placeholder-[#B09E91] focus:outline-none focus:border-[#4A2E1F]"
+            />
+          </div>
         </div>
 
         {/* 2열/3열 그리드 & 오른쪽 고정 장바구니 */}
-        <div className="flex items-start gap-8">
-          {/* 메뉴 그리드 */}
+        <div className="flex items-start gap-6">
+          {/* 메뉴 그리드 (첫 화면에 즉시 꽉 차게 노출) */}
           <main className="flex-1 min-w-0">
             {loading ? (
-              <div className="flex justify-center py-28">
-                <LoadingSpinner size="lg" text="최고의 메뉴를 선별하는 중입니다..." />
+              <div className="flex justify-center py-20">
+                <LoadingSpinner size="lg" text="메뉴를 준비하고 있습니다..." />
               </div>
             ) : error ? (
-              <div className="text-center py-24 bg-white rounded-3xl p-8 border border-[#EFEAE2]">
-                <p className="text-4xl mb-3">☕</p>
-                <p className="text-sm font-medium text-[#7C6A5E]">{error}</p>
+              <div className="text-center py-16 bg-white rounded-2xl p-6 border border-[#EFEAE2]">
+                <p className="text-3xl mb-2">☕</p>
+                <p className="text-xs font-medium text-[#7C6A5E]">{error}</p>
                 <button
                   onClick={() => window.location.reload()}
-                  className="mt-4 px-6 py-2.5 bg-[#3D271D] text-[#FAF7F2] text-xs font-semibold rounded-2xl hover:bg-[#2B1810] transition-colors"
+                  className="mt-3 px-5 py-2 bg-[#3D271D] text-[#FAF7F2] text-xs font-semibold rounded-xl hover:bg-[#2B1810]"
                 >
                   새로고침
                 </button>
               </div>
             ) : filtered.length === 0 ? (
-              <div className="text-center py-24 bg-white rounded-3xl p-8 border border-[#EFEAE2]">
-                <p className="text-4xl mb-3">🍃</p>
-                <p className="text-sm font-medium text-[#7C6A5E]">
+              <div className="text-center py-16 bg-white rounded-2xl p-6 border border-[#EFEAE2]">
+                <p className="text-3xl mb-2">🍃</p>
+                <p className="text-xs font-medium text-[#7C6A5E]">
                   {searchQuery ? `"${searchQuery}"에 해당하는 메뉴가 없습니다.` : `${activeCategory} 카테고리에 등록된 메뉴가 없습니다.`}
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-4.5">
                 {filtered.map(menu => (
                   <MenuCard key={menu.menu_id} menu={menu} />
                 ))}
@@ -206,7 +212,7 @@ export default function MenuPage() {
           </main>
 
           {/* 데스크톱 오른쪽 고정 장바구니 패널 */}
-          <div className="hidden lg:block w-84 shrink-0">
+          <div className="hidden lg:block w-80 shrink-0 sticky top-20">
             <CartPanel />
           </div>
         </div>
@@ -224,10 +230,10 @@ export default function MenuPage() {
             className="absolute inset-0 bg-[#2B1810]/40 backdrop-blur-sm animate-fade-in"
             onClick={() => setShowCart(false)}
           />
-          <div className="relative bg-[#FBF9F5] rounded-t-[32px] shadow-2xl p-6 max-h-[85vh] overflow-y-auto animate-slide-up border-t border-[#EFEAE2]">
+          <div className="relative bg-[#FBF9F5] rounded-t-3xl shadow-2xl p-5 max-h-[85vh] overflow-y-auto animate-slide-up border-t border-[#EFEAE2]">
             <button
               onClick={() => setShowCart(false)}
-              className="absolute top-5 right-5 text-[#8C7769] hover:text-[#2B1810] text-lg w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm"
+              className="absolute top-4 right-4 text-[#8C7769] hover:text-[#2B1810] text-sm w-7 h-7 rounded-full bg-white flex items-center justify-center shadow-sm"
               aria-label="장바구니 닫기"
             >
               ✕
