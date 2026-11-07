@@ -3,6 +3,7 @@
  * Context API를 사용하여 전역 상태 관리
  */
 import { createContext, useContext, useReducer, useEffect } from 'react'
+import { getMenuImageUrl } from '../lib/menuImages'
 
 const STORAGE_KEY = 'cafeorder_cart'
 const MAX_TOTAL_QUANTITY = 20
@@ -44,7 +45,7 @@ function cartReducer(state, action) {
             menu_id: menu.menu_id,
             name: menu.name,
             price: menu.price,
-            image_url: menu.image_url,
+            image_url: getMenuImageUrl(menu),
             quantity: 1,
           },
         ],

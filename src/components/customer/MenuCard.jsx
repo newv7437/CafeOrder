@@ -2,8 +2,7 @@
  * 메뉴 카드 컴포넌트
  */
 import { useCart } from '../../context/CartContext'
-
-const DEFAULT_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' fill='none'%3E%3Crect width='200' height='200' fill='%23F5F0E8'/%3E%3Ctext x='100' y='115' font-size='70' text-anchor='middle'%3E☕%3C/text%3E%3C/svg%3E"
+import { getMenuImageUrl, DEFAULT_MENU_IMAGE } from '../../lib/menuImages'
 
 export default function MenuCard({ menu }) {
   const { addItem, items } = useCart()
@@ -20,10 +19,10 @@ export default function MenuCard({ menu }) {
       {/* 이미지 */}
       <div className="relative overflow-hidden bg-amber-50 h-44">
         <img
-          src={menu.image_url || DEFAULT_IMAGE}
+          src={getMenuImageUrl(menu)}
           alt={menu.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          onError={(e) => { e.target.src = DEFAULT_IMAGE }}
+          onError={(e) => { e.target.src = DEFAULT_MENU_IMAGE }}
           loading="lazy"
         />
         {inCart > 0 && (
