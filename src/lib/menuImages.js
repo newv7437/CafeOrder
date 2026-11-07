@@ -24,3 +24,4 @@ export function getMenuImageUrl(menuOrName) {
   }
   return menuOrName.image_url || MENU_IMAGES[menuOrName.name] || DEFAULT_MENU_IMAGE
 }
+

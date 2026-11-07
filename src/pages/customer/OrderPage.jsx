@@ -1,24 +1,25 @@
 /**
- * 주문 상세/상태 조회 페이지
+ * 미니멀 프리미엄 주문 상세/상태 조회 페이지
+ * Minimal Premium · 따뜻한 아이보리 + 에스프레소 브라운
  * 경로: /order/:orderId
- * lookup_token 검증 필요
  */
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, useSearchParams, Link } from 'react-router-dom'
 import LoadingSpinner from '../../components/common/LoadingSpinner'
 import { apiFetch } from '../../lib/api'
+import { getMenuImageUrl, DEFAULT_MENU_IMAGE } from '../../lib/menuImages'
 
 const STATUS_STEPS = ['접수', '제조중', '완료']
 
 function StatusBadge({ status }) {
   const styles = {
-    '접수': 'bg-blue-100 text-blue-700 border-blue-200',
-    '제조중': 'bg-amber-100 text-amber-700 border-amber-200',
-    '완료': 'bg-green-100 text-green-700 border-green-200',
-    '취소': 'bg-red-100 text-red-700 border-red-200',
+    '접수': 'bg-[#F0EBE1] text-[#4A2E1F] border-[#DFD3C3]',
+    '제조중': 'bg-[#FFF8E7] text-[#B8860B] border-[#F2E0B5]',
+    '완료': 'bg-[#EBF7EE] text-[#2E7D32] border-[#C8E6C9]',
+    '취소': 'bg-[#FDECE9] text-[#C0392B] border-[#FADCD5]',
   }
   return (
-    <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold border ${styles[status] || 'bg-stone-100 text-stone-700 border-stone-200'}`}>
+    <span className={`inline-flex items-center px-3.5 py-1 rounded-full text-xs font-serif font-bold border ${styles[status] || 'bg-white text-[#7A695C] border-[#E8E1D7]'}`}>
       {status}
     </span>
   )
@@ -27,8 +28,8 @@ function StatusBadge({ status }) {
 function StatusProgress({ status }) {
   if (status === '취소') {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-center text-red-600 font-medium">
-        ❌ 주문이 취소되었습니다.
+      <div className="bg-[#FFF5F2] border border-[#FADCD5] rounded-2xl px-5 py-4 text-center text-[#C0392B] font-medium text-xs">
+        ✕ 주문이 취소되었습니다.
       </div>
     )
   }
@@ -36,11 +37,11 @@ function StatusProgress({ status }) {
   const currentIndex = STATUS_STEPS.indexOf(status)
 
   return (
-    <div className="relative flex items-center justify-between px-2">
+    <div className="relative flex items-center justify-between px-4 py-2">
       {/* 연결선 */}
-      <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-1 bg-stone-200 mx-8" />
+      <div className="absolute left-8 right-8 top-1/2 -translate-y-1/2 h-1 bg-[#EFE8DE]" />
       <div
-        className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-amber-500 mx-8 transition-all duration-700"
+        className="absolute left-8 top-1/2 -translate-y-1/2 h-1 bg-[#4A2E1F] transition-all duration-700"
         style={{ width: currentIndex === 0 ? '0%' : currentIndex === 1 ? '50%' : '100%' }}
       />
 
@@ -48,17 +49,17 @@ function StatusProgress({ status }) {
         const isDone = idx <= currentIndex
         const isCurrent = idx === currentIndex
         return (
-          <div key={step} className="relative flex flex-col items-center gap-1 z-10">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-500 ${
+          <div key={step} className="relative flex flex-col items-center gap-1.5 z-10">
+            <div className={`w-9 h-9 rounded-full flex items-center justify-center font-serif font-bold text-xs border-2 transition-all duration-500 shadow-sm ${
               isDone
-                ? 'bg-amber-500 border-amber-500 text-white'
-                : 'bg-white border-stone-300 text-stone-400'
-            } ${isCurrent ? 'ring-4 ring-amber-200 scale-110' : ''}`}>
+                ? 'bg-[#3D271D] border-[#3D271D] text-[#FAF7F2]'
+                : 'bg-white border-[#DED4C7] text-[#B09E91]'
+            } ${isCurrent ? 'ring-4 ring-[#EBDDCF] scale-110' : ''}`}>
               {isDone ? (isCurrent && step !== '완료' ? (
-                <span className="w-3 h-3 bg-white rounded-full animate-ping" />
+                <span className="w-2.5 h-2.5 bg-white rounded-full animate-ping" />
               ) : '✓') : idx + 1}
             </div>
-            <span className={`text-xs font-medium ${isDone ? 'text-amber-700' : 'text-stone-400'}`}>
+            <span className={`text-[11px] font-medium font-serif ${isDone ? 'text-[#3D271D]' : 'text-[#A08E82]'}`}>
               {step}
             </span>
           </div>
@@ -76,14 +77,13 @@ export default function OrderPage() {
   const [error, setError] = useState(null)
   const [lastUpdated, setLastUpdated] = useState(null)
 
-  // lookup_token: URL 파라미터 또는 로컬 스토리지에서
   const tokenFromUrl = searchParams.get('token')
   const tokenFromStorage = localStorage.getItem(`order_token_${orderId}`) || sessionStorage.getItem(`order_token_${orderId}`)
   const lookupToken = tokenFromUrl || tokenFromStorage
 
   const fetchOrder = useCallback(async () => {
     if (!lookupToken) {
-      setError('주문 조회 권한이 없습니다. 주문 완료 후 표시되는 링크를 사용해 주세요.')
+      setError('주문 조회 권한이 없습니다. 주문 완료 링크를 사용해 주세요.')
       setLoading(false)
       return
     }
@@ -107,32 +107,30 @@ export default function OrderPage() {
     fetchOrder()
   }, [fetchOrder])
 
-  // 5초 자동 갱신 (완료/취소 제외)
   useEffect(() => {
     if (order?.status === '완료' || order?.status === '취소') return
-
     const timer = setInterval(fetchOrder, 5000)
     return () => clearInterval(timer)
   }, [order?.status, fetchOrder])
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-amber-50 flex items-center justify-center">
-        <LoadingSpinner size="lg" text="주문 정보를 불러오는 중..." />
+      <div className="min-h-screen bg-[#FBF9F5] flex items-center justify-center">
+        <LoadingSpinner size="lg" text="주문 정보를 확인하는 중입니다..." />
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-amber-50 flex items-center justify-center px-4">
-        <div className="bg-white rounded-2xl shadow-lg p-8 max-w-md w-full text-center">
-          <p className="text-5xl mb-4">😕</p>
-          <h2 className="text-xl font-bold text-stone-800 mb-2">조회 실패</h2>
-          <p className="text-stone-500 mb-6">{error}</p>
+      <div className="min-h-screen bg-[#FBF9F5] flex items-center justify-center px-4">
+        <div className="bg-white rounded-3xl shadow-xl p-8 max-w-md w-full text-center border border-[#EFEAE2]">
+          <p className="text-4xl mb-3">☕</p>
+          <h2 className="text-xl font-serif font-bold text-[#2B1810] mb-2">조회 실패</h2>
+          <p className="text-xs text-[#7A695C] mb-6">{error}</p>
           <Link
             to="/"
-            className="inline-block bg-amber-700 text-white px-6 py-3 rounded-xl font-semibold hover:bg-amber-800 transition-colors"
+            className="inline-block bg-[#3D271D] text-[#FAF7F2] px-6 py-3 rounded-2xl text-xs font-semibold hover:bg-[#2B1810] transition-colors shadow-md"
           >
             메뉴로 돌아가기
           </Link>
@@ -149,45 +147,55 @@ export default function OrderPage() {
     : '-'
 
   return (
-    <div className="min-h-screen bg-amber-50">
-      <header className="bg-amber-800 text-white sticky top-0 z-30 shadow-lg">
-        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
-          <Link to="/" aria-label="메인으로" className="text-amber-200 hover:text-white">
-            ← 메뉴
+    <div className="min-h-screen bg-[#FBF9F5] text-[#2B1810]">
+      {/* 헤더 */}
+      <header className="bg-white/80 backdrop-blur-md sticky top-0 z-30 border-b border-[#EFEAE2]">
+        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
+          <Link to="/" aria-label="메인으로" className="text-xs font-serif text-[#7C6A5E] hover:text-[#2B1810] flex items-center gap-1.5 transition-colors">
+            <span>←</span>
+            <span>Menu</span>
           </Link>
-          <h1 className="text-lg font-bold">주문 상세</h1>
+          <h1 className="font-serif font-bold text-base text-[#2B1810]">Order Status</h1>
+          <div className="w-10" />
         </div>
       </header>
 
-      <main className="max-w-2xl mx-auto px-4 py-6 space-y-4">
+      <main className="max-w-2xl mx-auto px-4 py-8 space-y-5">
         {/* 주문 완료 배너 */}
         {order.status === '접수' && (
-          <div className="bg-blue-600 text-white rounded-2xl p-5 text-center shadow-md">
-            <p className="text-3xl mb-2">✅</p>
-            <p className="text-lg font-bold">주문이 접수되었습니다!</p>
-            <p className="text-blue-100 text-sm mt-1">잠시만 기다려 주세요</p>
+          <div className="bg-[#3D271D] text-[#FAF7F2] rounded-3xl p-6 text-center shadow-lg border border-[#3D271D]">
+            <p className="text-2xl mb-1.5">☕</p>
+            <p className="font-serif font-black text-xl">주문이 접수되었습니다!</p>
+            <p className="text-[#DFD3C3] text-xs mt-1">바리스타가 정성을 다해 준비하고 있습니다.</p>
+          </div>
+        )}
+        {order.status === '제조중' && (
+          <div className="bg-[#FFF8E7] text-[#4A2E1F] rounded-3xl p-6 text-center shadow-md border border-[#F2E0B5]">
+            <p className="text-2xl mb-1.5">✨</p>
+            <p className="font-serif font-black text-xl">맛있게 제조하고 있습니다!</p>
+            <p className="text-[#8C7769] text-xs mt-1">잠시만 기다려 주시면 곧 완성됩니다.</p>
           </div>
         )}
         {order.status === '완료' && (
-          <div className="bg-green-600 text-white rounded-2xl p-5 text-center shadow-md">
-            <p className="text-3xl mb-2">🎉</p>
-            <p className="text-lg font-bold">주문이 완료되었습니다!</p>
-            <p className="text-green-100 text-sm mt-1">맛있게 드세요 😊</p>
+          <div className="bg-[#EBF7EE] text-[#1B5E20] rounded-3xl p-6 text-center shadow-md border border-[#C8E6C9]">
+            <p className="text-2xl mb-1.5">🎉</p>
+            <p className="font-serif font-black text-xl">주문이 준비되었습니다!</p>
+            <p className="text-[#388E3C] text-xs mt-1">픽업대에서 음료를 수령해 주세요.</p>
           </div>
         )}
 
-        {/* 주문 정보 */}
-        <div className="bg-white rounded-2xl shadow-md p-5">
-          <div className="flex items-start justify-between mb-4">
+        {/* 주문 정보 카드 */}
+        <div className="bg-white rounded-3xl shadow-[0_4px_20px_rgba(61,39,29,0.05)] p-6 border border-[#EFEAE2]">
+          <div className="flex items-start justify-between mb-3">
             <div>
-              <p className="text-stone-400 text-xs">주문번호</p>
-              <p className="text-2xl font-extrabold text-stone-800">#{order.order_id}</p>
+              <p className="text-[11px] text-[#A08E82] uppercase tracking-wider">Order No.</p>
+              <p className="font-serif text-3xl font-black text-[#2B1810]">#{order.order_id}</p>
             </div>
             <StatusBadge status={order.status} />
           </div>
-          <p className="text-stone-400 text-xs">주문 시간: {orderedAt}</p>
+          <p className="text-xs text-[#8C7769]">주문 일시: {orderedAt}</p>
           {lastUpdated && (
-            <p className="text-stone-300 text-xs mt-1">
+            <p className="text-[11px] text-[#A08E82] mt-1">
               최종 갱신: {lastUpdated.toLocaleTimeString('ko-KR')}
               {order.status !== '완료' && order.status !== '취소' && ' (5초마다 자동 갱신)'}
             </p>
@@ -195,41 +203,53 @@ export default function OrderPage() {
         </div>
 
         {/* 진행 상태 */}
-        <div className="bg-white rounded-2xl shadow-md p-5">
-          <h2 className="font-bold text-stone-800 mb-5">주문 진행 상황</h2>
+        <div className="bg-white rounded-3xl shadow-[0_4px_20px_rgba(61,39,29,0.05)] p-6 border border-[#EFEAE2]">
+          <h2 className="font-serif font-bold text-sm text-[#2B1810] mb-4">주문 진행 현황</h2>
           <StatusProgress status={order.status} />
         </div>
 
-        {/* 주문 항목 */}
-        <div className="bg-white rounded-2xl shadow-md p-5">
-          <h2 className="font-bold text-stone-800 mb-3">주문 내역</h2>
-          <ul className="divide-y divide-stone-100">
+        {/* 주문 내역 */}
+        <div className="bg-white rounded-3xl shadow-[0_4px_20px_rgba(61,39,29,0.05)] p-6 border border-[#EFEAE2]">
+          <h2 className="font-serif font-bold text-sm text-[#2B1810] mb-4">주문 내역</h2>
+          <ul className="divide-y divide-[#EFE8DE]">
             {(order.items || []).map(item => (
-              <li key={item.item_id} className="flex justify-between py-3">
-                <div>
-                  <p className="font-medium text-stone-800">{item.name}</p>
-                  <p className="text-stone-400 text-xs">{item.unit_price.toLocaleString()}원 × {item.quantity}</p>
+              <li key={item.item_id} className="flex items-center justify-between py-3.5">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-xl bg-[#FAF7F2] p-1 border border-[#EFE8DE] flex items-center justify-center overflow-hidden">
+                    <img
+                      src={getMenuImageUrl(item.name || item)}
+                      alt={item.name}
+                      className="w-full h-full object-contain"
+                      onError={(e) => { e.target.src = DEFAULT_MENU_IMAGE }}
+                    />
+                  </div>
+                  <div>
+                    <p className="font-medium text-xs text-[#2B1810]">{item.name}</p>
+                    <p className="text-[11px] text-[#8C7769]">{item.unit_price.toLocaleString()}원 × {item.quantity}</p>
+                  </div>
                 </div>
-                <p className="font-semibold text-stone-800">
+                <p className="font-serif font-bold text-sm text-[#3D271D]">
                   {(item.unit_price * item.quantity).toLocaleString()}원
                 </p>
               </li>
             ))}
           </ul>
-          <div className="border-t-2 border-stone-100 pt-3 flex justify-between">
-            <span className="font-bold text-stone-700">합계</span>
-            <span className="font-extrabold text-xl text-amber-700">
+          <div className="border-t border-[#F2ECE4] pt-4 mt-2 flex justify-between items-baseline">
+            <span className="font-serif font-bold text-sm text-[#2B1810]">총 결제금액</span>
+            <span className="font-serif font-black text-2xl text-[#3D271D]">
               {order.total_price.toLocaleString()}원
             </span>
           </div>
         </div>
 
-        <div className="text-center pb-6">
+        {/* 메뉴로 돌아가기 버튼 */}
+        <div className="text-center pt-2 pb-8">
           <Link
             to="/"
-            className="inline-block bg-amber-700 text-white px-8 py-3 rounded-xl font-semibold hover:bg-amber-800 transition-colors shadow-md"
+            className="cursor-pointer inline-flex items-center justify-center gap-2 bg-[#3D271D] text-[#FAF7F2] px-8 py-3.5 rounded-2xl font-serif font-bold text-sm hover:bg-[#2B1810] transition-all shadow-lg active:scale-95"
           >
-            메뉴로 돌아가기
+            <span>메뉴로 돌아가기</span>
+            <span>→</span>
           </Link>
         </div>
       </main>
